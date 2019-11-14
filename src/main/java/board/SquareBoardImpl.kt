@@ -1,6 +1,6 @@
 package board
 
-data class SquareBordImpl(override val width: Int) : SquareBoard {
+open class SquareBoardImpl(override val width: Int) : SquareBoard {
 
     private val cells = mutableSetOf<Cell>()
 

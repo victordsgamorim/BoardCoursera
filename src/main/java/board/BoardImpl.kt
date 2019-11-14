@@ -1,9 +1,8 @@
 package board
 
-import board.Direction.*
+fun createSquareBoard(width: Int): SquareBoard = SquareBoardImpl(width)
+fun <T> createGameBoard(width: Int): GameBoard<T> = GameBoardImpl(width)
 
-fun createSquareBoard(width: Int): SquareBoard = SquareBordImpl(width)
-fun <T> createGameBoard(width: Int): GameBoard<T> = TODO()
 
 
 
