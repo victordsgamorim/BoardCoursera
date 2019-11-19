@@ -20,17 +20,6 @@ import java.util.*
  * You can find more examples in 'TestGame2048Helper'.
 */
 
-private lateinit var inputString: String
-
-fun main() {
-
-    val scanner = Scanner(System.`in`)
-    val inputString = scanner.nextLine()
-    println("Hello, World.\n$inputString")
-
-
-}
-
 fun <T : Any> List<T?>.moveAndMergeEqual(merge: (T) -> T): List<T?> {
     val list = this.filterNotNull().toMutableList()
 

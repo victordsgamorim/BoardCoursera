@@ -3,7 +3,6 @@ package games.game2048
 import board.Cell
 import board.GameBoard
 import board.GameBoardImpl
-import board.createGameBoard
 import kotlin.random.Random
 
 interface Game2048Initializer<T> {
@@ -27,12 +26,16 @@ object RandomGame2048Initializer : Game2048Initializer<Int> {
     override fun nextValue(board: GameBoard<Int?>): Pair<Cell, Int>? {
 
         /**generate a random value(2 or 4) to a random cell*/
-        val cell = board
+        val cells = board
                 .filter { it == null }
-                .shuffled()
-                .first()
-        board[cell] = generateRandomStartValue()
 
-        return null
+        if(cells.isEmpty()) return null
+
+        /**adding value*/
+        val randomValue = generateRandomStartValue()
+        val cell = cells.shuffled().first()
+
+        return Pair(cell, randomValue)
+
     }
 }
