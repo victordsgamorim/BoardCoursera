@@ -2,13 +2,13 @@ package board
 
 class GameBoardImpl<T>(width: Int) : SquareBoardImpl(width), GameBoard<T> {
 
-     private val cellElements = mutableMapOf<Cell, T?>()
+    private val cellElements = mutableMapOf<Cell, T?>()
 
     init {
 
-        for(r in 1..width){
+        for (r in 1..width) {
 
-            for(c in 1..width){
+            for (c in 1..width) {
                 val cell = getCell(r, c)
                 cellElements[cell] = null
             }
@@ -30,7 +30,6 @@ class GameBoardImpl<T>(width: Int) : SquareBoardImpl(width), GameBoard<T> {
     override fun any(predicate: (T?) -> Boolean) = cellElements.values.any(predicate)
 
     override fun all(predicate: (T?) -> Boolean) = cellElements.values.all(predicate)
-
 
 
 }
