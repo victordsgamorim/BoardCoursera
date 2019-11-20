@@ -2,9 +2,11 @@ package games.game2048
 
 import board.Cell
 import board.Direction
+import board.Direction.*
 import board.GameBoard
 import board.createGameBoard
 import games.game.Game
+import java.lang.IllegalArgumentException
 
 /*
  * Your task is to implement the game 2048 https://en.wikipedia.org/wiki/2048_(video_game).
@@ -12,8 +14,7 @@ import games.game.Game
  *
  * After implementing it you can try to play the game running 'PlayGame2048'.
  */
-fun newGame2048(initializer: Game2048Initializer<Int> = RandomGame2048Initializer): Game =
-        Game2048(initializer)
+fun newGame2048(initializer: Game2048Initializer<Int> = RandomGame2048Initializer): Game = Game2048(initializer)
 
 class Game2048(private val initializer: Game2048Initializer<Int>) : Game {
     private val board = createGameBoard<Int?>(4)
@@ -41,7 +42,10 @@ class Game2048(private val initializer: Game2048Initializer<Int>) : Game {
  * Add a new value produced by 'initializer' to a specified cell in a board.
  */
 fun GameBoard<Int?>.addNewValue(initializer: Game2048Initializer<Int>) {
-    TODO()
+    val (cell, value) = initializer.nextValue(this)
+            ?: throw IllegalArgumentException("Empty Initializer")
+
+    this[cell] = value
 }
 
 /*
@@ -53,7 +57,51 @@ fun GameBoard<Int?>.addNewValue(initializer: Game2048Initializer<Int>) {
  * Return 'true' if the values were moved and 'false' otherwise.
  */
 fun GameBoard<Int?>.moveValuesInRowOrColumn(rowOrColumn: List<Cell>): Boolean {
-    TODO()
+    val values = rowOrColumn
+            .map { cell -> this[cell] }
+            .moveAndMergeEqual { value -> value.times(2) }
+
+
+    return when (values.isNotEmpty()) {
+        true -> addNewValueToCell(values, rowOrColumn)
+        else -> false
+    }
+}
+
+private fun GameBoard<Int?>.addNewValueToCell(values: List<Int?>, rowOrColumn: List<Cell>): Boolean {
+
+    var move = false
+
+    for (i in values.indices) {
+        val cell = rowOrColumn[i]
+        val addedValue = values[i]
+
+        if (this[cell] != addedValue) {
+            this[cell] = addedValue
+            move = true
+        }
+
+    }
+    for (i in values.size until width) this[rowOrColumn[i]] = null
+    return move
+}
+
+private fun addNewValueToCell(values: List<Int?>, allCells: List<Cell>, board: GameBoard<Int?>): Boolean {
+
+    for (i in values.indices) {
+        val cell = allCells[i]
+        val newValue = values[i]
+
+        if (board[cell] != newValue) {
+            board[cell] = newValue
+            return true
+        }
+
+        for (i in values.size until board.width) {
+            board[allCells[i]] = null
+        }
+    }
+    return false
 }
 
 /*
@@ -63,6 +111,30 @@ fun GameBoard<Int?>.moveValuesInRowOrColumn(rowOrColumn: List<Cell>): Boolean {
  * Use the 'moveValuesInRowOrColumn' function above.
  * Return 'true' if the values were moved and 'false' otherwise.
  */
-fun GameBoard<Int?>.moveValues(direction: Direction): Boolean {
-    TODO()
+fun GameBoard<Int?>.moveValues(direction: Direction): Boolean =
+        when (direction) {
+            LEFT -> movingRow(1..width)
+            RIGHT -> movingRow(width downTo 1)
+            DOWN -> movingColumn(width downTo 1)
+            UP -> movingColumn(1..width)
+
+        }
+
+private fun GameBoard<Int?>.movingColumn(rowRange: IntProgression): Boolean {
+    var moving = false
+
+    for (column in 1..width) {
+        val column = this.getColumn(rowRange, column)
+        moving = moveValuesInRowOrColumn(column)
+    }
+    return moving
+}
+
+private fun GameBoard<Int?>.movingRow(jRange: IntProgression): Boolean {
+    var moving = false
+    for (row in 1..width) {
+        val rows = this.getRow(row, jRange)
+        moving = moveValuesInRowOrColumn(rows)
+    }
+    return moving
 }

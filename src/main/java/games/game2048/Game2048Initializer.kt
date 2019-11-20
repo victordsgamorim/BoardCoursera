@@ -28,12 +28,13 @@ object RandomGame2048Initializer : Game2048Initializer<Int> {
         /**generate a random value(2 or 4) to a random cell*/
         val cells = board
                 .filter { it == null }
+                .shuffled()
 
         if(cells.isEmpty()) return null
 
         /**adding value*/
         val randomValue = generateRandomStartValue()
-        val cell = cells.shuffled().first()
+        val cell = cells.first()
 
         return Pair(cell, randomValue)
 
